@@ -3,20 +3,17 @@ const { Comment } = require('../models');
 const ApiError = require('../utils/ApiError');
 
 /**
- * Create a user
- * @param {Object} userBody
- * @returns {Promise<User>}
+ * Create a comment
+ * @param {Object} commentBody
+ * @returns {Promise<Comment>}
  */
-const createComment = async (body) => {
-//   if (await User.isEmailTaken(userBody.email)) {
-//     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
-//   }
-//   return User.create(userBody);
-      return  Comment.create(body)
+const createComment = async (commentBody) => {
+  const comment = await Comment.create(commentBody);
+  return comment;
 };
 
 /**
- * Query for users
+ * Query for comments
  * @param {Object} filter - Mongo filter
  * @param {Object} options - Query options
  * @param {string} [options.sortBy] - Sort option in the format: sortField:(desc|asc)
@@ -24,67 +21,54 @@ const createComment = async (body) => {
  * @param {number} [options.page] - Current page (default = 1)
  * @returns {Promise<QueryResult>}
  */
-const queryUsers = async (filter, options) => {
-  const users = await User.paginate(filter, options);
-  return users;
+const queryComments = async (filter, options) => {
+  const comments = await Comment.paginate(filter, options);
+  return comments;
 };
 
 /**
- * Get user by id
+ * Get comment by id
  * @param {ObjectId} id
- * @returns {Promise<User>}
+ * @returns {Promise<Comment>}
  */
-const getUserById = async (id) => {
-  return User.findById(id);
+const getCommentById = async (id) => {
+  return Comment.findById(id);
 };
 
 /**
- * Get user by email
- * @param {string} email
- * @returns {Promise<User>}
- */
-const getUserByEmail = async (email) => {
-  return User.findOne({ email });
-};
-
-/**
- * Update user by id
- * @param {ObjectId} userId
+ * Update comment by id
+ * @param {ObjectId} commentId
  * @param {Object} updateBody
- * @returns {Promise<User>}
+ * @returns {Promise<Comment>}
  */
-const updateUserById = async (userId, updateBody) => {
-  const user = await getUserById(userId);
-  if (!user) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+const updateCommentById = async (commentId, updateBody) => {
+  const comment = await getCommentById(commentId);
+  if (!comment) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Comment not found');
   }
-  if (updateBody.email && (await User.isEmailTaken(updateBody.email, userId))) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
-  }
-  Object.assign(user, updateBody);
-  await user.save();
-  return user;
+  Object.assign(comment, updateBody);
+  await comment.save();
+  return comment;
 };
 
 /**
- * Delete user by id
- * @param {ObjectId} userId
- * @returns {Promise<User>}
+ * Delete comment by id
+ * @param {ObjectId} commentId
+ * @returns {Promise<Comment>}
  */
-const deleteUserById = async (userId) => {
-  const user = await getUserById(userId);
-  if (!user) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+const deleteCommentById = async (commentId) => {
+  const comment = await getCommentById(commentId);
+  if (!comment) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Comment not found');
   }
-  await user.remove();
-  return user;
+  await comment.remove();
+  return comment;
 };
 
 module.exports = {
   createComment,
-  queryUsers,
-  getUserById,
-  getUserByEmail,
-  updateUserById,
-  deleteUserById,
+  queryComments,
+  getCommentById,
+  updateCommentById,
+  deleteCommentById,
 };

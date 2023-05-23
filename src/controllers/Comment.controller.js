@@ -6,39 +6,38 @@ const { commentService } = require('../services');
 
 const createComment = catchAsync(async (req, res) => {
   const comment = await commentService.createComment(req.body);
-  console.log(comment)
   res.status(httpStatus.CREATED).send(comment);
 });
 
-const getUsers = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ['name', 'role']);
+const getComments = catchAsync(async (req, res) => {
+  const filter = pick(req.query, ['user', 'content', 'postId', 'type']);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
-  const result = await userService.queryUsers(filter, options);
+  const result = await commentService.queryComments(filter, options);
   res.send(result);
 });
 
-const getUser = catchAsync(async (req, res) => {
-  const user = await userService.getUserById(req.params.userId);
-  if (!user) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+const getComment = catchAsync(async (req, res) => {
+  const comment = await commentService.getCommentById(req.params.commentId);
+  if (!comment) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Comment not found');
   }
-  res.send(user);
+  res.send(comment);
 });
 
-const updateUser = catchAsync(async (req, res) => {
-  const user = await userService.updateUserById(req.params.userId, req.body);
-  res.send(user);
+const updateComment = catchAsync(async (req, res) => {
+  const comment = await commentService.updateCommentById(req.params.commentId, req.body);
+  res.send(comment);
 });
 
-const deleteUser = catchAsync(async (req, res) => {
-  await userService.deleteUserById(req.params.userId);
+const deleteComment = catchAsync(async (req, res) => {
+  await commentService.deleteCommentById(req.params.commentId);
   res.status(httpStatus.NO_CONTENT).send();
 });
 
 module.exports = {
-    createComment,
-  getUsers,
-  getUser,
-  updateUser,
-  deleteUser,
+  createComment,
+  getComments,
+  getComment,
+  updateComment,
+  deleteComment,
 };

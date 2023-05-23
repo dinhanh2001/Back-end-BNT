@@ -1,28 +1,38 @@
 const express = require('express');
 const auth = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
-const userValidation = require('../../validations/user.validation');
-const commentController = require('../../controllers/Comment.controller');
+const commentValidation = require('../../validations/comment.validation');
+const commentController = require('../../controllers/comment.controller');
 
 const router = express.Router();
-router.post('/',commentController.createComment)
+
+router
+  .route('/')
+  .post(auth('manageComments'), validate(commentValidation.createComment), commentController.createComment)
+  .get(auth('getComments'), validate(commentValidation.getComments), commentController.getComments);
+
+router
+  .route('/:commentId')
+  .get(auth('getComments'), validate(commentValidation.getComment), commentController.getComment)
+  .patch(auth('manageComments'), validate(commentValidation.updateComment), commentController.updateComment)
+  .delete(auth('manageComments'), validate(commentValidation.deleteComment), commentController.deleteComment);
 
 module.exports = router;
 
 /**
  * @swagger
  * tags:
- *   name: Users
- *   description: User management and retrieval
+ *   name: Comments
+ *   description: Comment management and retrieval
  */
 
 /**
  * @swagger
- * /users:
+ * /comments:
  *   post:
- *     summary: Create a user
- *     description: Only admins can create other users.
- *     tags: [Users]
+ *     summary: Create a comment
+ *     description: Can create comments.
+ *     tags: [Comments]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -32,73 +42,77 @@ module.exports = router;
  *           schema:
  *             type: object
  *             required:
- *               - name
- *               - email
- *               - password
- *               - role
+ *               - user
+ *               - type
+ *               - manufacturer
+ *               - model
  *             properties:
- *               name:
+ *               user:
  *                 type: string
- *               email:
+ *               type:
  *                 type: string
- *                 format: email
- *                 description: must be unique
- *               password:
+ *                 description: comment type (car, var, bike, etc...)
+ *               manufacturer:
  *                 type: string
- *                 format: password
- *                 minLength: 8
- *                 description: At least one number and one letter
- *               role:
+ *               model:
+ *                 type: string
+ *                 description: comment model (308, Demio, Aqua, etc...)
+ *               numberplate:
  *                  type: string
- *                  enum: [user, admin]
+ *               makeyear:
+ *                  type: string
+ *               registeryear:
+ *                  type: string
+ *               capacity:
+ *                  type: string
+ *               fuel:
+ *                  type: string
+ *               color:
+ *                  type: string
  *             example:
- *               name: fake name
- *               email: fake@example.com
- *               password: password1
- *               role: user
+ *               user: (User ID)
+ *               type: car
+ *               manufacturer: Mazda
+ *               model: Demio
+ *               numberplate: KM-1898
+ *               makeyear: 2007
+ *               registeryear: 2011
+ *               capacity: 5
+ *               fuel: Petrol
+ *               color: Red
  *     responses:
  *       "201":
  *         description: Created
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/User'
+ *                $ref: '#/components/schemas/Comment'
  *       "400":
- *         $ref: '#/components/responses/DuplicateEmail'
+ *         $ref: '#/components/responses/Duplicate'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
  *         $ref: '#/components/responses/Forbidden'
  *
  *   get:
- *     summary: Get all users
- *     description: Only admins can retrieve all users.
- *     tags: [Users]
+ *     summary: Get all comments
+ *     description: Retrieve all comments.
+ *     tags: [Comments]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: query
- *         name: name
+ *         name: user
  *         schema:
  *           type: string
- *         description: User name
- *       - in: query
- *         name: role
- *         schema:
- *           type: string
- *         description: User role
- *       - in: query
- *         name: sortBy
- *         schema:
- *           type: string
- *         description: sort by query in the form of field:desc/asc (ex. name:asc)
+ *         description: User id
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
  *           minimum: 1
  *         default: 10
- *         description: Maximum number of users
+ *         description: Maximum number of comments
  *       - in: query
  *         name: page
  *         schema:
@@ -117,7 +131,7 @@ module.exports = router;
  *                 results:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/User'
+ *                     $ref: '#/components/schemas/Comment'
  *                 page:
  *                   type: integer
  *                   example: 1
@@ -138,11 +152,11 @@ module.exports = router;
 
 /**
  * @swagger
- * /users/{id}:
+ * /comments/{id}:
  *   get:
- *     summary: Get a user
- *     description: Logged in users can fetch only their own user information. Only admins can fetch other users.
- *     tags: [Users]
+ *     summary: Get a comment
+ *     description: fetch Comments by id
+ *     tags: [Comments]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -151,14 +165,14 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: User id
+ *         description: Comment id
  *     responses:
  *       "200":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/User'
+ *                $ref: '#/components/schemas/Comment'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
@@ -167,9 +181,9 @@ module.exports = router;
  *         $ref: '#/components/responses/NotFound'
  *
  *   patch:
- *     summary: Update a user
- *     description: Logged in users can only update their own information. Only admins can update other users.
- *     tags: [Users]
+ *     summary: Update a comment
+ *     description: Update comments.
+ *     tags: [Comments]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -178,7 +192,7 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: User id
+ *         description: Comment id
  *     requestBody:
  *       required: true
  *       content:
@@ -186,30 +200,48 @@ module.exports = router;
  *           schema:
  *             type: object
  *             properties:
- *               name:
+ *               user:
  *                 type: string
- *               email:
+ *               type:
  *                 type: string
- *                 format: email
- *                 description: must be unique
- *               password:
+ *                 description: comment type (car, var, bike, etc...)
+ *               manufacturer:
  *                 type: string
- *                 format: password
- *                 minLength: 8
- *                 description: At least one number and one letter
+ *               model:
+ *                 type: string
+ *                 description: comment model (308, Demio, Aqua, etc...)
+ *               numberplate:
+ *                  type: string
+ *               makeyear:
+ *                  type: string
+ *               registeryear:
+ *                  type: string
+ *               capacity:
+ *                  type: string
+ *               fuel:
+ *                  type: string
+ *               color:
+ *                  type: string
  *             example:
- *               name: fake name
- *               email: fake@example.com
- *               password: password1
+ *               user: (User ID)
+ *               type: car
+ *               manufacturer: Mazda
+ *               model: Demio
+ *               numberplate: KM-1898
+ *               makeyear: 2007
+ *               registeryear: 2011
+ *               capacity: 5
+ *               fuel: Petrol
+ *               color: Red
  *     responses:
  *       "200":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/User'
+ *                $ref: '#/components/schemas/Comment'
  *       "400":
- *         $ref: '#/components/responses/DuplicateEmail'
+ *         $ref: '#/components/responses/Duplicate'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
@@ -218,9 +250,9 @@ module.exports = router;
  *         $ref: '#/components/responses/NotFound'
  *
  *   delete:
- *     summary: Delete a user
- *     description: Logged in users can delete only themselves. Only admins can delete other users.
- *     tags: [Users]
+ *     summary: Delete a comment
+ *     description: Delete comments.
+ *     tags: [Comments]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -229,7 +261,7 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: User id
+ *         description: Comment id
  *     responses:
  *       "200":
  *         description: No content

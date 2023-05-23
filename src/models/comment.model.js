@@ -1,26 +1,32 @@
 const mongoose = require('mongoose');
-const { toJSON } = require('./plugins');
-const { tokenTypes } = require('../config/tokens');
+const { toJSON, paginate } = require('./plugins');
+const ObjectId = mongoose.SchemaTypes.ObjectId
 
 const commentSchema = mongoose.Schema(
   {
-
-    user: {
-      type: mongoose.SchemaTypes.ObjectId,
-      ref: 'User',
-      required: true,
-    },
-    content: {
-      type: String,
-      required: true,
-      trim : true
-    },
-    postsId : {
-        type: mongoose.SchemaTypes.ObjectId,
-        required:true
-    }
-
-  },
+		user: {
+			type: ObjectId,
+			required: true,
+			trim: true,
+		},
+		content: {
+			type: String,
+			required: true,
+			trim: true,
+		},
+		postId: {
+			type: ObjectId,
+			required: true,
+			trim: true,
+		},
+		type: {
+			type: String,
+			required: true,
+			trim: true,
+			default: 'hide',
+			enum: "hide, show"
+		},
+	},
   {
     timestamps: true,
   }
@@ -28,10 +34,11 @@ const commentSchema = mongoose.Schema(
 
 // add plugin that converts mongoose to json
 commentSchema.plugin(toJSON);
+commentSchema.plugin(paginate);
 
 /**
- * @typedef Token
+ * @typedef Comment
  */
-const Token = mongoose.model('Comment', commentSchema);
+const Comment = mongoose.model('Comment', commentSchema);
 
-module.exports = Token;
+module.exports = Comment;

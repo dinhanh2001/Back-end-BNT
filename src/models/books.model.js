@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
 const { toJSON, paginate } = require('./plugins');
+const ObjectId = mongoose.SchemaTypes.ObjectId;
 
 const booksSchema = mongoose.Schema(
   {
 		maSach: {
-			type: String,
+			type: ObjectId,
 			required: true,
 			trim: true,
 		},

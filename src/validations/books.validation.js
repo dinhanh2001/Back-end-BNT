@@ -4,7 +4,7 @@ const { objectId } = require('./custom.validation');
 const createBooks = {
   body: Joi.object().keys(
       {
-		maSach: Joi.string(),
+		maSach: Joi.string().custom(objectId),
 		ten: Joi.string(),
 		gia: Joi.number(),
 		nxb: Joi.string(),
@@ -15,7 +15,7 @@ const createBooks = {
 const getBooks = {
   query: Joi.object().keys(
       {
-		maSach: Joi.string(),
+		maSach: Joi.string().custom(objectId),
 		ten: Joi.string(),
 		gia: Joi.number(),
 		nxb: Joi.string(),
@@ -31,7 +31,7 @@ const getBook = {
 
 const searchBook = {
   params: Joi.object().keys({
-    maSach: Joi.string(),
+    maSach: Joi.string().custom(objectId),
 		ten: Joi.string(),
 		gia: Joi.number(),
 		nxb: Joi.string(),
@@ -43,7 +43,7 @@ const updateBooks = {
   }),
   body: Joi.object()
     .keys({
-		maSach: Joi.string(),
+		maSach: Joi.string().custom(objectId),
 		ten: Joi.string(),
 		gia: Joi.number(),
 		nxb: Joi.string(),
