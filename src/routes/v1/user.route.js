@@ -9,12 +9,12 @@ const router = express.Router();
 router
   .route('/')
   .post(auth('manageUsers'), validate(userValidation.createUser), userController.createUser)
-  .get(auth('getUsers'), validate(userValidation.getUsers), userController.getUsers);
+  .get(validate(userValidation.getUsers), userController.getUsers);
 
 router
   .route('/:userId')
-  .get(auth('getUsers'), validate(userValidation.getUser), userController.getUser)
-  .patch(auth('manageUsers'), validate(userValidation.updateUser), userController.updateUser)
+  .get(validate(userValidation.getUser), userController.getUser)
+  .put(auth('manageUsers'), validate(userValidation.updateUser), userController.updateUser)
   .delete(auth('manageUsers'), validate(userValidation.deleteUser), userController.deleteUser);
 
 module.exports = router;
@@ -176,7 +176,7 @@ module.exports = router;
  *       "404":
  *         $ref: '#/components/responses/NotFound'
  *
- *   patch:
+ *   put:
  *     summary: Update a user
  *     description: Logged in users can only update their own information. Only admins can update other users.
  *     tags: [Users]

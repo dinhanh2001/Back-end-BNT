@@ -7,6 +7,9 @@ const commentController = require('../../controllers/comment.controller');
 const router = express.Router();
 
 router
+  .route('/aaa')
+  .get(auth('getComments'), validate(commentValidation.getComments), commentController.getComments);
+router
   .route('/')
   .post(auth('manageComments'), validate(commentValidation.createComment), commentController.createComment)
   .get(auth('getComments'), validate(commentValidation.getComments), commentController.getComments);
@@ -14,7 +17,7 @@ router
 router
   .route('/:commentId')
   .get(auth('getComments'), validate(commentValidation.getComment), commentController.getComment)
-  .patch(auth('manageComments'), validate(commentValidation.updateComment), commentController.updateComment)
+  .put(auth('manageComments'), validate(commentValidation.updateComment), commentController.updateComment)
   .delete(auth('manageComments'), validate(commentValidation.deleteComment), commentController.deleteComment);
 
 module.exports = router;
@@ -180,7 +183,7 @@ module.exports = router;
  *       "404":
  *         $ref: '#/components/responses/NotFound'
  *
- *   patch:
+ *   put:
  *     summary: Update a comment
  *     description: Update comments.
  *     tags: [Comments]

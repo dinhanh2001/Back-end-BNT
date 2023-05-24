@@ -478,7 +478,7 @@ describe('User routes', () => {
     });
   });
 
-  describe('PATCH /v1/users/:userId', () => {
+  describe('put /v1/users/:userId', () => {
     test('should return 200 and successfully update user if data is ok', async () => {
       await insertUsers([userOne]);
       const updateBody = {
@@ -488,7 +488,7 @@ describe('User routes', () => {
       };
 
       const res = await request(app)
-        .patch(`/v1/users/${userOne._id}`)
+        .put(`/v1/users/${userOne._id}`)
         .set('Authorization', `Bearer ${userOneAccessToken}`)
         .send(updateBody)
         .expect(httpStatus.OK);
@@ -512,7 +512,7 @@ describe('User routes', () => {
       await insertUsers([userOne]);
       const updateBody = { name: faker.name.findName() };
 
-      await request(app).patch(`/v1/users/${userOne._id}`).send(updateBody).expect(httpStatus.UNAUTHORIZED);
+      await request(app).put(`/v1/users/${userOne._id}`).send(updateBody).expect(httpStatus.UNAUTHORIZED);
     });
 
     test('should return 403 if user is updating another user', async () => {
@@ -520,7 +520,7 @@ describe('User routes', () => {
       const updateBody = { name: faker.name.findName() };
 
       await request(app)
-        .patch(`/v1/users/${userTwo._id}`)
+        .put(`/v1/users/${userTwo._id}`)
         .set('Authorization', `Bearer ${userOneAccessToken}`)
         .send(updateBody)
         .expect(httpStatus.FORBIDDEN);
@@ -531,7 +531,7 @@ describe('User routes', () => {
       const updateBody = { name: faker.name.findName() };
 
       await request(app)
-        .patch(`/v1/users/${userOne._id}`)
+        .put(`/v1/users/${userOne._id}`)
         .set('Authorization', `Bearer ${adminAccessToken}`)
         .send(updateBody)
         .expect(httpStatus.OK);
@@ -542,7 +542,7 @@ describe('User routes', () => {
       const updateBody = { name: faker.name.findName() };
 
       await request(app)
-        .patch(`/v1/users/${userOne._id}`)
+        .put(`/v1/users/${userOne._id}`)
         .set('Authorization', `Bearer ${adminAccessToken}`)
         .send(updateBody)
         .expect(httpStatus.NOT_FOUND);
@@ -553,7 +553,7 @@ describe('User routes', () => {
       const updateBody = { name: faker.name.findName() };
 
       await request(app)
-        .patch(`/v1/users/invalidId`)
+        .put(`/v1/users/invalidId`)
         .set('Authorization', `Bearer ${adminAccessToken}`)
         .send(updateBody)
         .expect(httpStatus.BAD_REQUEST);
@@ -564,7 +564,7 @@ describe('User routes', () => {
       const updateBody = { email: 'invalidEmail' };
 
       await request(app)
-        .patch(`/v1/users/${userOne._id}`)
+        .put(`/v1/users/${userOne._id}`)
         .set('Authorization', `Bearer ${userOneAccessToken}`)
         .send(updateBody)
         .expect(httpStatus.BAD_REQUEST);
@@ -575,7 +575,7 @@ describe('User routes', () => {
       const updateBody = { email: userTwo.email };
 
       await request(app)
-        .patch(`/v1/users/${userOne._id}`)
+        .put(`/v1/users/${userOne._id}`)
         .set('Authorization', `Bearer ${userOneAccessToken}`)
         .send(updateBody)
         .expect(httpStatus.BAD_REQUEST);
@@ -586,7 +586,7 @@ describe('User routes', () => {
       const updateBody = { email: userOne.email };
 
       await request(app)
-        .patch(`/v1/users/${userOne._id}`)
+        .put(`/v1/users/${userOne._id}`)
         .set('Authorization', `Bearer ${userOneAccessToken}`)
         .send(updateBody)
         .expect(httpStatus.OK);
@@ -597,7 +597,7 @@ describe('User routes', () => {
       const updateBody = { password: 'passwo1' };
 
       await request(app)
-        .patch(`/v1/users/${userOne._id}`)
+        .put(`/v1/users/${userOne._id}`)
         .set('Authorization', `Bearer ${userOneAccessToken}`)
         .send(updateBody)
         .expect(httpStatus.BAD_REQUEST);
@@ -608,7 +608,7 @@ describe('User routes', () => {
       const updateBody = { password: 'password' };
 
       await request(app)
-        .patch(`/v1/users/${userOne._id}`)
+        .put(`/v1/users/${userOne._id}`)
         .set('Authorization', `Bearer ${userOneAccessToken}`)
         .send(updateBody)
         .expect(httpStatus.BAD_REQUEST);
@@ -616,7 +616,7 @@ describe('User routes', () => {
       updateBody.password = '11111111';
 
       await request(app)
-        .patch(`/v1/users/${userOne._id}`)
+        .put(`/v1/users/${userOne._id}`)
         .set('Authorization', `Bearer ${userOneAccessToken}`)
         .send(updateBody)
         .expect(httpStatus.BAD_REQUEST);

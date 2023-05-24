@@ -5,9 +5,10 @@ const ObjectId = mongoose.SchemaTypes.ObjectId;
 const booksSchema = mongoose.Schema(
   {
 		maSach: {
-			type: ObjectId,
+			type: String,
 			required: true,
 			trim: true,
+			unique: true
 		},
 		ten: {
 			type: String,

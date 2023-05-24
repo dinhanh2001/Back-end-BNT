@@ -8,18 +8,18 @@ const router = express.Router();
 
 router
   .route('/')
-  .post(auth('manageBookss'), validate(booksValidation.createBooks), booksController.createBooks)
-  .get(auth('getBooks'), validate(booksValidation.getBooks), booksController.getBooks);
+  .post(auth('manageBooks'), validate(booksValidation.createBooks), booksController.createBooks)
+  .get(validate(booksValidation.getBooks), booksController.getBooks);
 
 router
   .route('/search')
-  .post(auth('getBooks'), validate(booksValidation.searchBook), booksController.searchBook);
+  .post(validate(booksValidation.searchBook), booksController.searchBook);
 
 router
   .route('/:booksId')
-  .get(auth('getBooks'), validate(booksValidation.getBooks), booksController.getBooks)
-  .patch(auth('manageBookss'), validate(booksValidation.updateBooks), booksController.updateBooks)
-  .delete(auth('manageBookss'), validate(booksValidation.deleteBooks), booksController.deleteBooks);
+  .get(validate(booksValidation.getBooks), booksController.getBooks)
+  .put(auth('manageBooks'), validate(booksValidation.updateBooks), booksController.updateBooks)
+  .delete(auth('manageBooks'), validate(booksValidation.deleteBooks), booksController.deleteBooks);
 
 module.exports = router;
 
@@ -184,7 +184,7 @@ module.exports = router;
  *       "404":
  *         $ref: '#/components/responses/NotFound'
  *
- *   patch:
+ *   put:
  *     summary: Update a books
  *     description: Update bookss.
  *     tags: [Bookss]
